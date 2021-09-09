@@ -1,0 +1,156 @@
+import com.ooooonly.onote.buildSrc.Libs
+import com.ooooonly.onote.buildSrc.Versions
+
+buildscript {
+    dependencies {
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
+    }
+}
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+}
+
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "com.ooooonly.onote"
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.compose
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+kapt {
+    correctErrorTypes true
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjvm-default=enable', '-Xopt-in=kotlin.RequiresOptIn']
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+
+    // kotlin
+    implementation Libs.Kotlin.std
+    implementation Libs.Kotlin.reflect
+    implementation Libs.Kotlin.Coroutine.android
+    implementation Libs.Kotlin.Serialization.json
+
+    // compose
+    implementation Libs.Compose.runtime
+    implementation Libs.Compose.ui
+    implementation Libs.Compose.foundationLayout
+    implementation Libs.Compose.material
+    implementation Libs.Compose.materialIconsExtended
+    implementation Libs.Compose.foundation
+    implementation Libs.Compose.animation
+
+    implementation Libs.Compose.runtimeLivedata
+
+    implementation Libs.Compose.navigation
+    implementation Libs.Compose.activity
+
+    debugImplementation Libs.Compose.uiTooling
+    debugImplementation Libs.Compose.UiTest.manifest
+    androidTestImplementation Libs.Compose.UiTest.junit4
+    androidTestImplementation Libs.Compose.UiTest.uiTest
+
+    implementation Libs.material
+
+    // accompanist
+    implementation Libs.Accompanist.swipeRefresh
+    implementation Libs.Accompanist.insets
+    implementation Libs.Accompanist.systemUiController
+    implementation Libs.Accompanist.flowlayout
+    implementation Libs.Accompanist.permissions
+    implementation Libs.Accompanist.placeholderMaterial
+
+    // androidx
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.activityKtx
+    implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.preference
+
+    // androidx.lifecycle
+    implementation Libs.AndroidX.LifeCycle.lifecycleRuntimeKtx
+    implementation Libs.AndroidX.LifeCycle.viewmodelSavedstate
+    implementation Libs.AndroidX.LifeCycle.livedataKtx
+    implementation Libs.AndroidX.LifeCycle.viewModelCompose
+
+    // test
+    testImplementation Libs.junit
+    androidTestImplementation Libs.AndroidX.Test.junit
+    androidTestImplementation Libs.AndroidX.Test.espresso
+    androidTestImplementation Libs.AndroidX.Test.rules
+    androidTestImplementation Libs.AndroidX.Test.runner
+
+    // hilt
+    implementation Libs.Hilt.android
+    kapt Libs.Hilt.androidCompiler
+
+    // coil
+    implementation Libs.Coil.coil
+    implementation Libs.Coil.coilCompose
+
+    // okhttp
+    implementation Libs.Okhttp.okhttp
+    implementation Libs.Okhttp.coroutines
+
+    // datastore-preferences
+    implementation Libs.DataStore.preferences
+
+    // datastore-room
+    implementation Libs.Room.runtime
+    kapt Libs.Room.compiler
+    implementation Libs.Room.ktx
+
+    //app center
+    implementation Libs.AppCenter.analytics
+    implementation Libs.AppCenter.crashes
+    implementation Libs.AppCenter.distribute
+}

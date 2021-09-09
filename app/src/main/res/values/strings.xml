@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ONote</string>
+
+    <string name="note_title">笔记</string>
+
+    <string name="todo_title">待办</string>
+
+    <string name="drawer_title">记事本</string>
+</resources>
