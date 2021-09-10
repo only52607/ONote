@@ -1,7 +1,7 @@
 package com.ooooonly.onote.di
 
-import com.ooooonly.onote.data.NoteRepository
-import com.ooooonly.onote.data.impl.NoteRepositoryImpl
+import com.ooooonly.onote.data.repsitory.NoteRepository
+import com.ooooonly.onote.data.repsitory.impl.NoteRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

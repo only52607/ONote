@@ -17,3 +17,4 @@ local.properties
 .idea/gradle.xml
 buildSrc/build
 gradle/wrapper/gradle-wrapper.jar
+.idea/vcs.xml
