@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ooooonly.onote.data.repsitory.NoteRepository
+import com.ooooonly.onote.di.NoteStoreDirectory
 import com.ooooonly.onote.model.entity.Note
 import com.ooooonly.onote.model.entity.NotePackage
 import com.ooooonly.onote.model.entity.NotePackageType
@@ -18,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    @NoteStoreDirectory
+    private val noteStoreDirectory: File
 ) : ViewModel() {
     private val allNotePackageState = NotePackageState(NotePackage.ALL, this)
 
@@ -68,10 +71,14 @@ class NoteViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNewEditingState(noteState: NoteState, packageState: NotePackageState = allNotePackageState) {
         _editingNoteState.value = NoteState(
-            entity = Note(file = File("")),
+            entity = Note(file = File(noteStoreDirectory, System.currentTimeMillis().toString())),
             notePackageState = packageState,
             noteViewModel = this
         )
+    }
+
+    fun clearEditingState() {
+        _editingNoteState.value = null
     }
 
     private suspend fun loadNotePackages() {
@@ -93,12 +100,14 @@ class NoteViewModel @Inject constructor(
     internal fun saveNoteState(noteState: NoteState) {
         viewModelScope.launch {
             noteRepository.saveNote(noteState.entity)
+            updateNotes()
         }
     }
 
     internal fun saveNotePackageState(notePackageState: NotePackageState) {
         viewModelScope.launch {
             noteRepository.savePackage(notePackageState.entity)
+            loadNotePackages()
         }
     }
 }

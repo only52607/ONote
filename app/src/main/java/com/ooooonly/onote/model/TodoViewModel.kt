@@ -39,6 +39,7 @@ class TodoViewModel @Inject constructor(
     internal fun saveTodoState(todoState: TodoState) {
         viewModelScope.launch {
             todoRepository.saveTodo(todoState.entity)
+            loadTodos()
         }
     }
 }
