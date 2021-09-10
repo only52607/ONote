@@ -13,7 +13,7 @@ import java.util.*
 data class Todo constructor(
     @PrimaryKey(autoGenerate = true)
     override var id: Long? = null,
-    var content: String,
+    var content: String = "",
     var done: Boolean = false,
     @ColumnInfo(name = "notify_cron")
     var notifyCron: String? = null,

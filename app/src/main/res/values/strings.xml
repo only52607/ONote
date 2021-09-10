@@ -3,7 +3,11 @@
 
     <string name="note_title">笔记</string>
 
+    <string name="note_editor_title">编辑笔记</string>
+
     <string name="todo_title">待办</string>
 
     <string name="drawer_title">记事本</string>
+
+    <string name="empty_default">没有内容噢~</string>
 </resources>

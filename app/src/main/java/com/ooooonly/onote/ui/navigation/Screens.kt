@@ -16,6 +16,8 @@ sealed class LeafScreen(
 
     object Note : LeafScreen("note")
 
+    object NoteEditor : LeafScreen("editor")
+
     object Todo : LeafScreen("todo")
 }
 

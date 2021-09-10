@@ -1,5 +1,7 @@
 package com.ooooonly.onote.model
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,7 +37,15 @@ class TodoViewModel @Inject constructor(
             todoRepository.removeTodo(todoState.entity)
         }
     }
-    
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createEmptyTodoState(): TodoState {
+        return TodoState(
+            entity = Todo(),
+            todoViewModel = this
+        )
+    }
+
     internal fun saveTodoState(todoState: TodoState) {
         viewModelScope.launch {
             todoRepository.saveTodo(todoState.entity)

@@ -19,6 +19,7 @@ import com.ooooonly.onote.di.AppContainer
 import com.ooooonly.onote.model.NoteViewModel
 import com.ooooonly.onote.model.TodoViewModel
 import com.ooooonly.onote.ui.note.NoteScreen
+import com.ooooonly.onote.ui.note.edit.NoteEditorScreen
 import com.ooooonly.onote.ui.todo.TodoScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -73,7 +74,21 @@ private fun NavGraphBuilder.addNoteTopLevel(
         composable(LeafScreen.Note.createRoute(Screen.Note)) {
             NoteScreen(
                 noteViewModel = noteViewModel,
-                navigationIcon = navigationIcon
+                navigationIcon = navigationIcon,
+                toEditor = {
+                    navController.navigate(LeafScreen.NoteEditor.createRoute(Screen.Note))
+                }
+            )
+        }
+        composable(LeafScreen.NoteEditor.createRoute(Screen.Note)) {
+            NoteEditorScreen(
+                noteViewModel = noteViewModel,
+                onFinished = {
+                    navController.popBackStack()
+                },
+                onBackPressed = {
+                    navController.popBackStack()
+                }
             )
         }
     }
