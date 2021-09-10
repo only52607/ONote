@@ -21,7 +21,7 @@ data class Note constructor(
     var type: NoteType = NoteType.MARK_DOWN,
     var background: Int? = null,
     @ColumnInfo(name = "package_id")
-    var packageId: Long,
+    var packageId: Long? = null,
     @ColumnInfo(name = "create_time")
     override var createTime: Date = Date.from(Instant.now()),
     @ColumnInfo(name = "modify_time")

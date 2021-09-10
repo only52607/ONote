@@ -17,16 +17,15 @@ data class NotePackage (
     var type: NotePackageType = NotePackageType.PUBLIC,
     var password: String? = null,
     var cover: Int? = null,
-    @ColumnInfo(name = "is_default")
-    val isDefault: Boolean = false,
+    @ColumnInfo(name = "is_all")
+    val isAll: Boolean = false,         // 代表该NotePackage包含所有的Note
     @ColumnInfo(name = "create_time")
     override var createTime: Date = Date.from(Instant.now()),
     @ColumnInfo(name = "modify_time")
     override var modifyTime: Date = Date.from(Instant.now()),
 ): RoomEntity {
     companion object {
-        val default: NotePackage
-            get() = NotePackage(name = "默认", isDefault = true)
+        val ALL: NotePackage = NotePackage(name = "全部", isAll = true)
     }
 }
 

@@ -1,5 +1,7 @@
 package com.ooooonly.onote.model
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,24 +13,30 @@ import com.ooooonly.onote.model.entity.NoteType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository
-): ViewModel() {
+) : ViewModel() {
+    private val allNotePackageState = NotePackageState(NotePackage.ALL, this)
 
     private val _notes = mutableStateListOf<NoteState>()
     val notes: List<NoteState> = _notes
 
-    private val _notePackages = mutableStateListOf<NotePackageState>()
+    private val _notePackages = mutableStateListOf(allNotePackageState)
     val notePackage: List<NotePackageState> = _notePackages
 
-    private val _currentNotePackage: MutableState<NotePackageState?> = mutableStateOf(null)
+    private val _currentNotePackage: MutableState<NotePackageState> = mutableStateOf(allNotePackageState)
     val currentNotePackage by _currentNotePackage
 
+    private val _editingNoteState = mutableStateOf<NoteState?>(null)
+    val editingNoteState by _editingNoteState
+
     init {
-        viewModelScope.launch { initNotePackages() }
+        viewModelScope.launch { loadNotePackages() }
+        viewModelScope.launch { updateNotes() }
     }
 
     fun setCurrentNotePackage(notePackageState: NotePackageState) {
@@ -39,26 +47,31 @@ class NoteViewModel @Inject constructor(
     }
 
     fun removeNotePackage(notePackageState: NotePackageState) {
+        _notePackages.remove(notePackageState)
+        _notePackages.add(allNotePackageState)
         viewModelScope.launch {
             noteRepository.removePackage(notePackageState.entity)
         }
     }
 
     fun removeNote(noteState: NoteState) {
+        _notes.remove(noteState)
         viewModelScope.launch {
             noteRepository.removeNote(noteState.entity)
         }
     }
 
-    private suspend fun initNotePackages() {
-        loadNotePackages()
-        if (_notePackages.size == 0) {
-            noteRepository.savePackage(NotePackage.default)
-            initNotePackages()
-            return
-        }
-        _currentNotePackage.value = _notePackages[0]
-        updateNotes()
+    fun setEditingNoteState(noteState: NoteState) {
+        _editingNoteState.value = noteState
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createNewEditingState(noteState: NoteState, packageState: NotePackageState = allNotePackageState) {
+        _editingNoteState.value = NoteState(
+            entity = Note(file = File("")),
+            notePackageState = packageState,
+            noteViewModel = this
+        )
     }
 
     private suspend fun loadNotePackages() {
@@ -70,13 +83,11 @@ class NoteViewModel @Inject constructor(
 
     private suspend fun updateNotes() {
         _notes.clear()
-        _currentNotePackage.value?.let { notePackageState ->
-            _notes.addAll(
-                noteRepository.listNotesByPackage(notePackageState.entity).map { noteEnnity ->
-                    NoteState(noteEnnity, notePackageState, this)
-                }
-            )
-        }
+        _notes.addAll(
+            noteRepository.listNotesByPackage(_currentNotePackage.value.entity).map { noteEntity ->
+                NoteState(noteEntity, _currentNotePackage.value, this)
+            }
+        )
     }
 
     internal fun saveNoteState(noteState: NoteState) {
@@ -126,10 +137,10 @@ class NoteState(
     }
 }
 
-class NotePackageState (
+class NotePackageState(
     override val entity: NotePackage,
     private val noteViewModel: NoteViewModel
-): RoomEntityState<NotePackage> {
+) : RoomEntityState<NotePackage> {
     var name: String by mutableStateOf(entity.name)
     var type: NotePackageType by mutableStateOf(entity.type)
     var password: String? by mutableStateOf(entity.password)

@@ -30,6 +30,9 @@ class NoteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun listNotesByPackage(notePackage: NotePackage): Array<Note> {
+        if (notePackage.isAll) {
+            return noteDao.loadAllNotes()
+        }
         return notePackage.id?.let {
             noteDao.loadNotesByPackage(it)
         } ?: arrayOf()

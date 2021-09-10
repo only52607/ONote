@@ -30,6 +30,7 @@ class TodoViewModel @Inject constructor(
     }
 
     fun removeTodo(todoState: TodoState) {
+        _todos.remove(todoState)
         viewModelScope.launch {
             todoRepository.removeTodo(todoState.entity)
         }
