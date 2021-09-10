@@ -9,13 +9,14 @@ import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material.icons.twotone.EventAvailable
 import androidx.compose.material.icons.twotone.NoteAlt
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.ooooonly.onote.R
 
@@ -131,3 +132,23 @@ private val HomeNavigationItems = listOf(
         selectedImageVector = Icons.TwoTone.EventAvailable,
     ),
 )
+
+@Composable
+fun NavController.bottomNavigationVisibleState(): State<Boolean> {
+    val visible = remember { mutableStateOf(true) }
+
+    val visibleRoutes = HomeNavigationItems.map { it.screen.route }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            visible.value = visibleRoutes.contains(destination.route)
+        }
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return visible
+}

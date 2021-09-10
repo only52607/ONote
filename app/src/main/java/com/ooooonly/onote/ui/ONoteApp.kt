@@ -17,9 +17,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ooooonly.onote.di.AppContainer
 import com.ooooonly.onote.model.NoteViewModel
 import com.ooooonly.onote.model.TodoViewModel
-import com.ooooonly.onote.ui.navigation.ONoteBottomNavigationBar
-import com.ooooonly.onote.ui.navigation.ONoteNavGraph
-import com.ooooonly.onote.ui.navigation.Screen
+import com.ooooonly.onote.ui.navigation.*
 import com.ooooonly.onote.ui.theme.ONoteTheme
 
 @Composable
@@ -38,14 +36,17 @@ fun ONoteApp(
             val scaffoldState = rememberScaffoldState()
             val currentSelectedItem by navController.currentScreenAsState()
             val coroutineScope = rememberCoroutineScope()
+            val bottomNavigationVisible by navController.bottomNavigationVisibleState()
             Scaffold(
                 scaffoldState = scaffoldState,
                 bottomBar = {
-                    ONoteBottomNavigationBar(
-                        navController = navController,
-                        modifier = Modifier.fillMaxWidth(),
-                        selectedNavigation = currentSelectedItem
-                    )
+                    if (bottomNavigationVisible) {
+                        ONoteBottomNavigationBar(
+                            navController = navController,
+                            modifier = Modifier.fillMaxWidth(),
+                            selectedNavigation = currentSelectedItem
+                        )
+                    }
                 },
                 snackbarHost = {
                     SnackbarHost(it) { data -> Snackbar(snackbarData = data) }
@@ -76,30 +77,4 @@ fun ONoteApp(
             }
         }
     }
-}
-
-
-@Composable
-private fun NavController.currentScreenAsState(): State<Screen> {
-    val selectedItem = remember { mutableStateOf<Screen>(Screen.Note) }
-
-    DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.hierarchy.any { it.route == Screen.Note.route } -> {
-                    selectedItem.value = Screen.Note
-                }
-                destination.hierarchy.any { it.route == Screen.Todo.route } -> {
-                    selectedItem.value = Screen.Todo
-                }
-            }
-        }
-        addOnDestinationChangedListener(listener)
-
-        onDispose {
-            removeOnDestinationChangedListener(listener)
-        }
-    }
-
-    return selectedItem
 }
