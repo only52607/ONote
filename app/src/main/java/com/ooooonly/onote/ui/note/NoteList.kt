@@ -1,11 +1,17 @@
 package com.ooooonly.onote.ui.note
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowColumn
+import com.google.accompanist.flowlayout.FlowRow
 import com.ooooonly.onote.model.NoteState
 import com.ooooonly.onote.ui.components.EmptyView
 
@@ -38,7 +44,9 @@ fun NoteColumnList(
     notes: List<NoteState>,
     onNoteItemEvent: (NoteItemEvent) -> Unit,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier
+    ) {
         items(notes) { note ->
             NoteColumnListItem(noteState = note, onNoteItemEvent)
         }
@@ -51,7 +59,7 @@ fun NoteFlowList(
     notes: List<NoteState>,
     onNoteItemEvent: (NoteItemEvent) -> Unit,
 ) {
-    FlowColumn(modifier = modifier) {
+    FlowRow(modifier = modifier) {
         notes.forEach { NoteFlowListItem(noteState = it, onNoteItemEvent) }
     }
 }

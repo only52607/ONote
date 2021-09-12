@@ -1,6 +1,7 @@
 package com.ooooonly.onote.data.repsitory.impl
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.ooooonly.onote.data.dao.NoteDao
 import com.ooooonly.onote.data.dao.NotePackageDao

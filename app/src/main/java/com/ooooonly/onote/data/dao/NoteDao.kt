@@ -12,7 +12,7 @@ interface NoteDao {
     suspend fun loadNotesByPackage(packageId: Long): Array<Note>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveNote(vararg notes: Note): Long
+    suspend fun saveNote(note: Note): Long
 
     @Delete
     suspend fun deleteNote(vararg notes: Note)

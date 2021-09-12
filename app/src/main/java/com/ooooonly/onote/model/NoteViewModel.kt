@@ -12,8 +12,10 @@ import com.ooooonly.onote.model.entity.NotePackage
 import com.ooooonly.onote.model.entity.NotePackageType
 import com.ooooonly.onote.model.entity.NoteType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -69,7 +71,7 @@ class NoteViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNewEditingState(noteState: NoteState, packageState: NotePackageState = allNotePackageState) {
+    fun createNewEditingState(packageState: NotePackageState = allNotePackageState) {
         _editingNoteState.value = NoteState(
             entity = Note(file = File(noteStoreDirectory, System.currentTimeMillis().toString())),
             notePackageState = packageState,
@@ -123,26 +125,27 @@ class NoteState(
     var packageState: NotePackageState by mutableStateOf(notePackageState)
     var background: Int? by mutableStateOf(entity.background)
 
-    init {
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { title }.collect { entity.title = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { brief }.collect { entity.brief = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { type }.collect { entity.type = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { packageState }.collect { entity.packageId = it.entity.id!! }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { background }.collect { entity.background = it }
+    override suspend fun save() {
+        entity.title = title
+        entity.brief = brief
+        entity.type = type
+        entity.packageId = packageState.entity.id
+        entity.background = background
+        noteViewModel.saveNoteState(this)
+    }
+
+    suspend fun loadContent(): String? {
+        return entity.file.takeIf { it.exists() }?.let {
+            withContext(Dispatchers.IO) {
+                entity.file.readText()
+            }
         }
     }
 
-    override suspend fun save() {
-        noteViewModel.saveNoteState(this)
+    suspend fun storeContent(content: String) {
+        withContext(Dispatchers.IO) {
+            entity.file.writeText(content)
+        }
     }
 }
 
@@ -154,23 +157,13 @@ class NotePackageState(
     var type: NotePackageType by mutableStateOf(entity.type)
     var password: String? by mutableStateOf(entity.password)
     var cover: Int? by mutableStateOf(entity.cover)
-
-    init {
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { name }.collect { entity.name = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { type }.collect { entity.type = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { password }.collect { entity.password = it }
-        }
-        noteViewModel.viewModelScope.launch {
-            snapshotFlow { cover }.collect { entity.cover = it }
-        }
-    }
+    var isAll: Boolean by mutableStateOf(entity.isAll)
 
     override suspend fun save() {
+        entity.name = name
+        entity.type = type
+        entity.password = password
+        entity.cover = cover
         noteViewModel.saveNotePackageState(this)
     }
 }

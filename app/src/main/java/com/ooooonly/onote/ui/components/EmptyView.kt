@@ -16,6 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ooooonly.onote.R
 
+/**
+ * 空白视图
+ */
 @Composable
 fun EmptyView(
     modifier: Modifier = Modifier,

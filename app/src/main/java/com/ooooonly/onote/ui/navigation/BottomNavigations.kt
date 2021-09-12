@@ -137,7 +137,10 @@ private val HomeNavigationItems = listOf(
 fun NavController.bottomNavigationVisibleState(): State<Boolean> {
     val visible = remember { mutableStateOf(true) }
 
-    val visibleRoutes = HomeNavigationItems.map { it.screen.route }
+    val visibleRoutes = listOf(
+        LeafScreen.Note.createRoute(Screen.Note),
+        LeafScreen.Todo.createRoute(Screen.Todo)
+    )
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->

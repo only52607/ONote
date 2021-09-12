@@ -1,6 +1,7 @@
 package com.ooooonly.onote.model
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,9 @@ class TodoViewModel @Inject constructor(
     
     private val _todos = mutableStateListOf<TodoState>()
     val todos: List<TodoState> = _todos
+
+    private val _editingTodo = mutableStateOf<TodoState?>(null)
+    val editingTodo: TodoState? by _editingTodo
 
     init {
         viewModelScope.launch { loadTodos() }
@@ -39,11 +43,16 @@ class TodoViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createEmptyTodoState(): TodoState {
-        return TodoState(
+    fun createEmptyEditingTodoState() {
+        _editingTodo.value = TodoState(
             entity = Todo(),
             todoViewModel = this
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setEditingTodoState(todoState: TodoState) {
+        _editingTodo.value = todoState
     }
 
     internal fun saveTodoState(todoState: TodoState) {
@@ -62,19 +71,10 @@ class TodoState(
     var done: Boolean by mutableStateOf(entity.done)
     var notifyCron: String? by mutableStateOf(entity.notifyCron)
 
-    init {
-        todoViewModel.viewModelScope.launch {
-            snapshotFlow { content }.collect { entity.content = it }
-        }
-        todoViewModel.viewModelScope.launch {
-            snapshotFlow { done }.collect { entity.done = it }
-        }
-        todoViewModel.viewModelScope.launch {
-            snapshotFlow { notifyCron }.collect { entity.notifyCron = it }
-        }
-    }
-
     override suspend fun save() {
+        entity.content = content
+        entity.done = done
+        entity.notifyCron = notifyCron
         todoViewModel.saveTodoState(this)
     }
 }

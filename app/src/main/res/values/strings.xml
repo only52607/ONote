@@ -4,6 +4,7 @@
     <string name="note_title">笔记</string>
 
     <string name="note_editor_title">编辑笔记</string>
+    <string name="note_editor_saving">保存中</string>
 
     <string name="todo_title">待办</string>
 

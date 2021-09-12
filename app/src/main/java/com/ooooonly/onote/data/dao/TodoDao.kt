@@ -5,11 +5,11 @@ import com.ooooonly.onote.model.entity.Todo
 
 @Dao
 interface TodoDao {
-    @Query("SELECT * FROM note_package")
+    @Query("SELECT * FROM todo")
     suspend fun loadAllTodos(): Array<Todo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveTodo(vararg todos: Todo): Long
+    suspend fun saveTodo(todo: Todo): Long
 
     @Delete
     suspend fun deleteTodo(vararg todos: Todo)
