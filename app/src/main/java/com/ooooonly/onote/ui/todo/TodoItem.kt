@@ -7,9 +7,8 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.ooooonly.onote.model.TodoState
-import com.ooooonly.onote.ui.components.Padding
+import com.ooooonly.onote.ui.components.ContentPadding
 import com.ooooonly.onote.ui.components.SpaceRow
 import com.ooooonly.onote.utils.UiEvent
 
@@ -30,7 +29,7 @@ fun TodoListItem(
                 onTodoItemEvent(TodoItemEvent.OnClick(todoState))
             }
     ) {
-        Padding {
+        ContentPadding {
             SpaceRow {
                 item {
                     Checkbox(

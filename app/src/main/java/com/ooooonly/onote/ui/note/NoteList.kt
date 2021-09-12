@@ -14,6 +14,8 @@ import com.google.accompanist.flowlayout.FlowColumn
 import com.google.accompanist.flowlayout.FlowRow
 import com.ooooonly.onote.model.NoteState
 import com.ooooonly.onote.ui.components.EmptyView
+import com.ooooonly.onote.ui.components.StaggeredVerticalGrid
+import com.ooooonly.onote.utils.listPadding
 
 @Composable
 fun NoteList(
@@ -22,13 +24,15 @@ fun NoteList(
     onNoteItemEvent: (NoteItemEvent) -> Unit,
     style: NoteListStyle
 ) {
-    if(notes.isEmpty()) {
-        EmptyView()
-    } else {
-        Crossfade(targetState = style) {
-            when(it) {
-                NoteListStyle.Column -> NoteColumnList(modifier, notes, onNoteItemEvent)
-                NoteListStyle.Flow -> NoteFlowList(modifier, notes, onNoteItemEvent)
+    Box(modifier = Modifier.listPadding()) {
+        if(notes.isEmpty()) {
+            EmptyView()
+        } else {
+            Crossfade(targetState = style) {
+                when(it) {
+                    NoteListStyle.Column -> NoteColumnList(modifier, notes, onNoteItemEvent)
+                    NoteListStyle.Flow -> NoteFlowList(modifier, notes, onNoteItemEvent)
+                }
             }
         }
     }
@@ -59,7 +63,15 @@ fun NoteFlowList(
     notes: List<NoteState>,
     onNoteItemEvent: (NoteItemEvent) -> Unit,
 ) {
-    FlowRow(modifier = modifier) {
-        notes.forEach { NoteFlowListItem(noteState = it, onNoteItemEvent) }
+    LazyColumn(
+        modifier = modifier
+    ) {
+        item {
+            StaggeredVerticalGrid(
+                columns = 2
+            ) {
+                notes.forEach { NoteFlowListItem(noteState = it, onNoteItemEvent) }
+            }
+        }
     }
 }

@@ -73,6 +73,17 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group.contains('org.jetbrains.compose')) {
+            def groupName = details.requested.group.replace("org.jetbrains.compose", "androidx.compose")
+            details.useTarget(
+                    [group: groupName, name: details.requested.name, version: Versions.compose]
+            )
+        }
+    }
+}
+
 dependencies {
 
     // kotlin
@@ -153,4 +164,6 @@ dependencies {
     implementation Libs.AppCenter.analytics
     implementation Libs.AppCenter.crashes
     implementation Libs.AppCenter.distribute
+
+    implementation "com.halilibo.compose-richtext:richtext-commonmark:0.8.1"
 }

@@ -1,15 +1,15 @@
 package com.ooooonly.onote.ui.todo
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import com.ooooonly.onote.R
 import com.ooooonly.onote.model.TodoViewModel
-import com.ooooonly.onote.ui.components.TitleText
+import com.ooooonly.onote.ui.components.CenterTitleTopAppBar
+import com.ooooonly.onote.utils.listPadding
 
 @Composable
 fun TodoScreen(
@@ -18,15 +18,15 @@ fun TodoScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { TitleText(R.string.todo_title) },
+            CenterTitleTopAppBar(
+                title = { Text(stringResource(R.string.todo_title)) },
                 backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = navigationIcon,
             )
         }
     ) {
         TodoList(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.listPadding(),
             todos = todoViewModel.todos,
             onTodoItemEvent = { event ->
 
