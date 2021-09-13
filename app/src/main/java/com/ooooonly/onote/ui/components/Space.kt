@@ -9,21 +9,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import org.intellij.lang.annotations.JdkConstants
 
-object SpaceDefaults {
-    val gap: Dp = 16.dp
-}
+val LocalContentSpacerSize = staticCompositionLocalOf { 16.dp }
 
 /**
  * 为元素提供等距间隙
  */
 
 @Composable
-inline fun SpaceRow(
+fun SpacerRow(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
-    gap: Dp = SpaceDefaults.gap,
-    crossinline itemBuilder: SpaceRowScope.() -> Unit
+    gap: Dp = LocalContentSpacerSize.current,
+    itemBuilder: SpaceRowScope.() -> Unit
 ) {
     val cache = remember { mutableListOf<@Composable RowScope.() -> Unit>() }
     val scope = remember {
@@ -42,7 +40,7 @@ inline fun SpaceRow(
         var first = true
         for (item in items) {
             if (!first) {
-                Spacer(modifier = Modifier.width(gap))
+                ContentSpacer()
             } else {
                 first = false
             }
@@ -56,12 +54,19 @@ interface SpaceRowScope {
 }
 
 @Composable
-inline fun SpaceColumn(
+fun RowScope.ContentSpacer(
+    gap: Dp = LocalContentSpacerSize.current,
+) {
+    Spacer(modifier = Modifier.width(gap))
+}
+
+@Composable
+fun SpacerColumn(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    gap: Dp = SpaceDefaults.gap,
-    crossinline itemBuilder: SpaceColumnScope.() -> Unit
+    gap: Dp = LocalContentSpacerSize.current,
+    itemBuilder: SpaceColumnScope.() -> Unit
 ) {
     val cache = remember { mutableListOf<@Composable ColumnScope.() -> Unit>() }
     val scope = remember {
@@ -80,7 +85,7 @@ inline fun SpaceColumn(
         var first = true
         for (item in items) {
             if (!first) {
-                Spacer(modifier = Modifier.height(gap))
+                ContentSpacer()
             } else {
                 first = false
             }
@@ -91,4 +96,11 @@ inline fun SpaceColumn(
 
 interface SpaceColumnScope {
     fun item(content: @Composable ColumnScope.() -> Unit)
+}
+
+@Composable
+fun ColumnScope.ContentSpacer(
+    gap: Dp = LocalContentSpacerSize.current,
+) {
+    Spacer(modifier = Modifier.height(gap))
 }

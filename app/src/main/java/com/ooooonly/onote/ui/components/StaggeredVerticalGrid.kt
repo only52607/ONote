@@ -40,6 +40,7 @@ fun StaggeredVerticalGrid(
         ) {
             val colY = IntArray(columns) { 0 }
             placeables.forEach { placeable ->
+                // 将item放入当前高度最小的列中
                 val column = shortestColumn(colY)
                 placeable.place(
                     x = columnWidth * column,

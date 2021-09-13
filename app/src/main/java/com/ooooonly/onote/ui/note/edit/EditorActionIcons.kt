@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 
 @Composable
-fun RowScope.EdiorActionIcons(
+fun RowScope.EditorActionIcons(
     onUndoClick: () -> Unit = {},
     onRedoClick: () -> Unit = {}
 ) {

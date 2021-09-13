@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,6 +33,7 @@ fun NoteEditorScreen(
     onFinished: () -> Unit,
     onBackPressed: () -> Unit,
     editable: Boolean = false,
+
 ) {
     var content by remember { mutableStateOf("") }
     var saving by remember { mutableStateOf(false) }
@@ -66,7 +68,9 @@ fun NoteEditorScreen(
                 },
                 actions = {
                     AnimatedVisibility(currentEditable) {
-                        EdiorActionIcons()
+                        Row {
+                            EditorActionIcons()
+                        }
                     }
                     EditableSwitchIconButton(
                         editable = currentEditable,
@@ -119,7 +123,7 @@ fun NoteEditorScreen(
 @Composable
 private fun EditableSwitchIconButton(
     editable: Boolean,
-    onEditableChange: (Boolean) -> Unit
+    onEditableChange: (Boolean) -> Unit,
 ) {
     IconButton(onClick = { onEditableChange(!editable) }) {
         Crossfade(editable) {

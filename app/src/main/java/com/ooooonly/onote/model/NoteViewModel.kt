@@ -31,7 +31,7 @@ class NoteViewModel @Inject constructor(
     val notes: List<NoteState> = _notes
 
     private val _notePackages = mutableStateListOf(allNotePackageState)
-    val notePackage: List<NotePackageState> = _notePackages
+    val notePackages: List<NotePackageState> = _notePackages
 
     private val _currentNotePackage: MutableState<NotePackageState> = mutableStateOf(allNotePackageState)
     val currentNotePackage by _currentNotePackage
@@ -71,7 +71,7 @@ class NoteViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNewEditingState(packageState: NotePackageState = allNotePackageState) {
+    fun createNewEditingState(packageState: NotePackageState = currentNotePackage) {
         _editingNoteState.value = NoteState(
             entity = Note(file = File(noteStoreDirectory, System.currentTimeMillis().toString())),
             notePackageState = packageState,
@@ -85,6 +85,7 @@ class NoteViewModel @Inject constructor(
 
     private suspend fun loadNotePackages() {
         _notePackages.clear()
+        _notePackages.add(allNotePackageState)
         _notePackages.addAll(
             noteRepository.listPackages().map { NotePackageState(it, this) }
         )

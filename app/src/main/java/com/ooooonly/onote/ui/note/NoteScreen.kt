@@ -29,10 +29,7 @@ fun NoteScreen(
                 backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = navigationIcon,
                 actions = {
-                    IconButton(onClick = {
-                        listStyle = if (listStyle == NoteListStyle.Column) NoteListStyle.Flow
-                        else NoteListStyle.Column
-                    }) {
+                    IconButton(onClick = { listStyle = listStyle.reverse }) {
                         Crossfade(targetState = listStyle) {
                             when(it) {
                                 NoteListStyle.Column -> Icon(Icons.Filled.Segment, contentDescription = null)
@@ -44,18 +41,22 @@ fun NoteScreen(
             )
         }
     ) {
-        NoteList(
-            modifier = Modifier.background(Color.Transparent),
-            notes = noteViewModel.notes,
-            onNoteItemEvent = { event ->
-                when(event) {
-                    is NoteItemEvent.OnClick -> {
-                        noteViewModel.setEditingNoteState(event.noteState)
-                        toEditor()
+        CompositionLocalProvider(LocalNoteItemStyle provides NoteItemStyle(
+            showPackageName = !noteViewModel.currentNotePackage.isAll
+        )) {
+            NoteList(
+                modifier = Modifier.background(Color.Transparent),
+                notes = noteViewModel.notes,
+                onNoteItemEvent = { event ->
+                    when(event) {
+                        is NoteItemEvent.OnClick -> {
+                            noteViewModel.setEditingNoteState(event.noteState)
+                            toEditor()
+                        }
                     }
-                }
-            },
-            style = listStyle
-        )
+                },
+                style = listStyle
+            )
+        }
     }
 }

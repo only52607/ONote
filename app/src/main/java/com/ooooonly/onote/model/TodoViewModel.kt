@@ -1,7 +1,6 @@
 package com.ooooonly.onote.model
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.ooooonly.onote.data.repsitory.TodoRepository
 import com.ooooonly.onote.model.entity.Todo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +19,18 @@ class TodoViewModel @Inject constructor(
     private val _todos = mutableStateListOf<TodoState>()
     val todos: List<TodoState> = _todos
 
+    val doneTodos: List<TodoState> by derivedStateOf {
+        todos.filter { it.done }
+    }
+
+    val unDoneTodos: List<TodoState> by derivedStateOf {
+        todos.filter { !it.done }
+    }
+
     private val _editingTodo = mutableStateOf<TodoState?>(null)
     val editingTodo: TodoState? by _editingTodo
+
+    private val editingTodoObservers = mutableSetOf<(TodoState?)->Unit>()
 
     init {
         viewModelScope.launch { loadTodos() }
@@ -33,6 +41,17 @@ class TodoViewModel @Inject constructor(
         _todos.addAll(
             todoRepository.listTodos().map { TodoState(it, this) }
         )
+    }
+
+    fun addEditingTodoObserver(observer: (TodoState?) -> Unit): () -> Unit {
+        editingTodoObservers.add(observer)
+        return {
+            editingTodoObservers.remove(observer)
+        }
+    }
+
+    private fun notifyObservers() {
+        editingTodoObservers.forEach { it(editingTodo) }
     }
 
     fun removeTodo(todoState: TodoState) {
@@ -48,11 +67,19 @@ class TodoViewModel @Inject constructor(
             entity = Todo(),
             todoViewModel = this
         )
+        notifyObservers()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun setEditingTodoState(todoState: TodoState) {
         _editingTodo.value = todoState
+        notifyObservers()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun clearEditingTodoState() {
+        _editingTodo.value = null
+        notifyObservers()
     }
 
     internal fun saveTodoState(todoState: TodoState) {

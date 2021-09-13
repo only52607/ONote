@@ -1,6 +1,7 @@
 package com.ooooonly.onote.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ooooonly.onote.di.AppContainer
 import com.ooooonly.onote.model.NoteViewModel
 import com.ooooonly.onote.model.TodoViewModel
+import com.ooooonly.onote.ui.drawer.AppDrawer
 import com.ooooonly.onote.ui.navigation.*
 import com.ooooonly.onote.ui.theme.ONoteTheme
 import com.ooooonly.onote.ui.todo.edit.TodoEditorView
@@ -31,7 +33,7 @@ fun ONoteApp(
     noteViewModel: NoteViewModel,
     todoViewModel: TodoViewModel,
     appContainer: AppContainer
-){
+) {
     ONoteTheme {
         ProvideWindowInsets {
             val systemUiController = rememberSystemUiController()
@@ -42,17 +44,29 @@ fun ONoteApp(
             val bottomDrawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
             val currentSelectedItem by navController.currentScreenAsState()
             val coroutineScope = rememberCoroutineScope()
+            DisposableEffect(Unit) {
+                onDispose(todoViewModel.addEditingTodoObserver {
+                    when {
+                        it == null && bottomDrawerState.isExpanded -> {
+                            coroutineScope.launch {
+                                bottomDrawerState.close()
+                            }
+                        }
+                        it != null && bottomDrawerState.isClosed -> {
+                            coroutineScope.launch {
+                                bottomDrawerState.open()
+                            }
+                        }
+                    }
+                })
+            }
             BottomDrawer(
                 drawerState = bottomDrawerState,
                 gesturesEnabled = bottomDrawerState.isExpanded,
                 drawerContent = {
                     TodoEditorView(
                         todoViewModel = todoViewModel,
-                        onDone = {
-                            coroutineScope.launch {
-                                bottomDrawerState.close()
-                            }
-                        }
+                        onDone = todoViewModel::clearEditingTodoState
                     )
                 },
                 content = {
@@ -66,10 +80,7 @@ fun ONoteApp(
                                 noteViewModel.createNewEditingState()
                                 navController.navigate(LeafScreen.NoteEditor.createRoute(Screen.Note))
                             } else {
-                                coroutineScope.launch {
-                                    todoViewModel.createEmptyEditingTodoState()
-                                    bottomDrawerState.open()
-                                }
+                                todoViewModel.createEmptyEditingTodoState()
                             }
                         }
                     )
@@ -91,7 +102,9 @@ fun Home(
     val scaffoldState = rememberScaffoldState()
     val currentSelectedItem by navController.currentScreenAsState()
     val bottomNavigationVisible by navController.bottomNavigationVisibleState()
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
+        drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         scaffoldState = scaffoldState,
         bottomBar = {
             if (bottomNavigationVisible) {
@@ -106,7 +119,14 @@ fun Home(
             SnackbarHost(it) { data -> Snackbar(snackbarData = data) }
         },
         drawerContent = {
-
+            AppDrawer(
+                noteViewModel = noteViewModel,
+                onCloseDrawer = {
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+            )
         },
         floatingActionButton = {
             if (bottomNavigationVisible) {
