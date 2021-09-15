@@ -1,6 +1,7 @@
 package com.ooooonly.onote.ui.note
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,10 @@ import com.ooooonly.onote.utils.prettyFormat
 
 sealed class NoteItemEvent(val noteState: NoteState) : UiEvent {
     class OnClick(noteState: NoteState) : NoteItemEvent(noteState)
+    class onLongClick(noteState: NoteState) : NoteItemEvent(noteState)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteListItem(
     noteState: NoteState,
@@ -29,9 +32,12 @@ fun NoteListItem(
             .fillMaxWidth()
             .listItemPadding()
     ) {
-        Box(modifier = Modifier.clickable {
-            onNoteItemEvent(NoteItemEvent.OnClick(noteState))
-        }) {
+        Box(
+            modifier = Modifier.combinedClickable(
+                onClick = { onNoteItemEvent(NoteItemEvent.OnClick(noteState)) },
+                onLongClick = { onNoteItemEvent(NoteItemEvent.onLongClick(noteState)) }
+            )
+        ) {
             ContentPadding {
                 NoteListItemContent(noteState, showPackage)
             }
@@ -45,14 +51,15 @@ private fun NoteListItemContent(
     showPackage: Boolean,
 ) {
     Column {
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.caption) {
-                Row {
-                    Text(noteState.entity.modifyTime.prettyFormat(),)
-                    if (showPackage) {
-                        ContentSpacer()
-                        Text(noteState.packageState.name)
-                    }
+        CompositionLocalProvider(
+            LocalContentAlpha provides ContentAlpha.medium,
+            LocalTextStyle provides MaterialTheme.typography.caption
+        ) {
+            Row {
+                Text(noteState.entity.modifyTime.prettyFormat())
+                if (showPackage) {
+                    ContentSpacer()
+                    Text(noteState.packageState.name)
                 }
             }
         }

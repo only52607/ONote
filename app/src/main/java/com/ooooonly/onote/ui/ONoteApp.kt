@@ -35,7 +35,7 @@ fun ONoteApp(
     appContainer: AppContainer
 ) {
     ONoteTheme {
-        ProvideWindowInsets {
+        ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
             val systemUiController = rememberSystemUiController()
             SideEffect {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = true)

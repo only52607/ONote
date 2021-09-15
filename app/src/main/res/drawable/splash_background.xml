@@ -14,6 +14,6 @@
         android:left="100dp"
         android:right="100dp"
         android:gravity="center"
-        android:drawable="@drawable/bg_splash">
+        android:drawable="@drawable/ic_logo">
     </item>
 </layer-list>

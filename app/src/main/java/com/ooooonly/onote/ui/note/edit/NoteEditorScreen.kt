@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.halilibo.richtext.markdown.Markdown
 import com.halilibo.richtext.ui.RichText
 import com.ooooonly.onote.R
@@ -93,9 +94,9 @@ fun NoteEditorScreen(
                 Crossfade(currentEditable) { value ->
                     if (value) {
                         TextField(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
                             value = content,
-                            onValueChange = { content = it }
+                            onValueChange = { content = it },
                         )
                     } else {
                         RichText(

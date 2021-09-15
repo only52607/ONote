@@ -100,6 +100,11 @@ class NoteViewModel @Inject constructor(
         )
     }
 
+    suspend fun createNotePackage(notePackage: NotePackage) {
+        noteRepository.savePackage(notePackage)
+        loadNotePackages()
+    }
+
     internal fun saveNoteState(noteState: NoteState) {
         viewModelScope.launch {
             noteRepository.saveNote(noteState.entity)

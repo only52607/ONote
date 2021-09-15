@@ -3,13 +3,20 @@
 
     <string name="note_title">笔记</string>
 
+    <string name="note_item_delete">删除笔记</string>
+
+    <string name="note_note_package_create_title">创建笔记本</string>
+
     <string name="note_editor_title">编辑笔记</string>
     <string name="note_editor_saving">保存中</string>
 
     <string name="todo_title">待办</string>
     <string name="todo_done_label">已完成</string>
 
-    <string name="drawer_title">记事本</string>
+    <string name="drawer_title">笔记本</string>
 
     <string name="empty_default">没有内容噢~</string>
+
+    <string name="input_dialog_default_confirm">确定</string>
+    <string name="input_dialog_default_dismiss">取消</string>
 </resources>

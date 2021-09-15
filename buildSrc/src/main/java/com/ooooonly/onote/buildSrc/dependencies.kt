@@ -7,7 +7,7 @@ object Versions {
     const val kotlin = "1.5.21"
     const val compose = "1.0.1"
     const val coroutines = "1.5.0"
-    const val accompanist = "0.17.0"
+    const val accompanist = "0.18.0"
     const val room = "2.3.0"
     const val appCenter = "4.2.0"
     const val okhttp = "4.9.1"

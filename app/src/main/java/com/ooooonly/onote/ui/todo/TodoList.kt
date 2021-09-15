@@ -31,23 +31,25 @@ fun TodoList(
         }
         if (doneTodos.isNotEmpty()) {
             item {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.caption) {
-                        ListItemPadding {
-                            Text(stringResource(R.string.todo_done_label))
-                        }
+                CompositionLocalProvider(
+                    LocalContentAlpha provides ContentAlpha.medium,
+                    LocalTextStyle provides MaterialTheme.typography.caption
+                ) {
+                    ListItemPadding {
+                        Text(stringResource(R.string.todo_done_label))
                     }
                 }
             }
             items(doneTodos) { todo ->
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                    CompositionLocalProvider(LocalTextStyle provides TextStyle.Default.copy(textDecoration = TextDecoration.LineThrough)) {
-                        TodoListItem(
-                            todoState = todo,
-                            onTodoItemEvent = onTodoItemEvent,
-                            coroutineScope = rememberCoroutineScope()
-                        )
-                    }
+                CompositionLocalProvider(
+                    LocalContentAlpha provides ContentAlpha.disabled,
+                    LocalTextStyle provides TextStyle.Default.copy(textDecoration = TextDecoration.LineThrough)
+                ) {
+                    TodoListItem(
+                        todoState = todo,
+                        onTodoItemEvent = onTodoItemEvent,
+                        coroutineScope = rememberCoroutineScope()
+                    )
                 }
             }
         }
