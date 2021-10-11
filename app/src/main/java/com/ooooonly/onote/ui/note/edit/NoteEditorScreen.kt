@@ -19,12 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.halilibo.richtext.markdown.Markdown
-import com.halilibo.richtext.ui.RichText
 import com.ooooonly.onote.R
 import com.ooooonly.onote.model.NoteViewModel
-import com.ooooonly.onote.ui.components.ContentPadding
-import com.ooooonly.onote.ui.components.ProgressDialog
+import com.ooooonly.onote.ui.components.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -93,22 +90,18 @@ fun NoteEditorScreen(
             ContentPadding {
                 Crossfade(currentEditable) { value ->
                     if (value) {
-                        TextField(
+                        MarkwonEditorComposable(
                             modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
-                            value = content,
-                            onValueChange = { content = it },
+                            content = content,
+                            onContentChanged = { content = it },
                         )
                     } else {
-                        RichText(
+                        MarkwonComposable(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Markdown(
-                                content = content,
-                                onLinkClicked = {}
-                            )
-                        }
+                                .verticalScroll(rememberScrollState()),
+                            content = content
+                        )
                     }
                 }
             }
