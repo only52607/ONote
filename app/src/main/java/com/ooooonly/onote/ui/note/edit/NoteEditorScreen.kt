@@ -1,12 +1,12 @@
 package com.ooooonly.onote.ui.note.edit
 
+import android.widget.EditText
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -17,11 +17,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.ooooonly.onote.R
 import com.ooooonly.onote.model.NoteViewModel
 import com.ooooonly.onote.ui.components.*
+import com.ooooonly.onote.utils.rememberAndroidViewContainer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -31,7 +33,6 @@ fun NoteEditorScreen(
     onFinished: () -> Unit,
     onBackPressed: () -> Unit,
     editable: Boolean = false,
-
 ) {
     var content by remember { mutableStateOf("") }
     var saving by remember { mutableStateOf(false) }
@@ -57,7 +58,7 @@ fun NoteEditorScreen(
     }
     Scaffold(
         topBar = {
-            TopAppBar (
+            TopAppBar(
                 backgroundColor = MaterialTheme.colors.surface,
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
@@ -87,14 +88,26 @@ fun NoteEditorScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.surface)
         ) {
+            val editTextContainer = rememberAndroidViewContainer<EditText>()
             ContentPadding {
                 Crossfade(currentEditable) { value ->
                     if (value) {
-                        MarkwonEditorComposable(
-                            modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
-                            content = content,
-                            onContentChanged = { content = it },
-                        )
+                        Column(modifier = Modifier.fillMaxSize().navigationBarsWithImePadding()) {
+                            MarkwonEditorComposable(
+                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                content = content,
+                                onContentChanged = { content = it },
+                                viewContainer = editTextContainer
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState())
+                            ) {
+                                EditorOperations(
+                                    viewContainer = editTextContainer
+                                )
+                            }
+                        }
                     } else {
                         MarkwonComposable(
                             modifier = Modifier

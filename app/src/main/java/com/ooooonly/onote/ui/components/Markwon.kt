@@ -5,9 +5,11 @@ import android.view.Gravity
 import android.widget.EditText
 import android.widget.TextView
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.addTextChangedListener
+import com.ooooonly.onote.utils.AndroidViewContainer
 import io.noties.markwon.Markwon
 import io.noties.markwon.editor.MarkwonEditor
 import io.noties.markwon.editor.MarkwonEditorTextWatcher
@@ -57,8 +59,14 @@ fun MarkwonComposable(
 fun MarkwonEditorComposable(
     modifier: Modifier,
     content: String,
-    onContentChanged: (String) -> Unit
+    onContentChanged: (String) -> Unit,
+    viewContainer: AndroidViewContainer<EditText>? = null
 ) {
+    DisposableEffect(viewContainer) {
+        onDispose {
+            viewContainer?.clearView()
+        }
+    }
     AndroidView(
         modifier = modifier,
         factory = { context ->
@@ -76,6 +84,7 @@ fun MarkwonEditorComposable(
                     onContentChanged(it.toString())
                 }
                 setText(content)
+                viewContainer?.setView(this)
             }
         },
         update = { textView ->
@@ -84,4 +93,8 @@ fun MarkwonEditorComposable(
 //            }
         }
     )
+}
+
+class MarkwonEditorController {
+
 }
