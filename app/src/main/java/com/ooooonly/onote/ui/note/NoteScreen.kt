@@ -49,7 +49,7 @@ fun NoteScreen(
         }
     ) {
         CompositionLocalProvider(LocalNoteItemStyle provides NoteItemStyle(
-            showPackageName = !noteViewModel.currentNotePackage.isAll
+            showPackageName = false // noteViewModel.currentNotePackage.isAll
         )) {
             NoteList(
                 modifier = Modifier.background(Color.Transparent),
