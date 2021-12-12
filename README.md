@@ -22,8 +22,8 @@
 
 ## 应用截图
 
-![snapshot1](./snapshots/snapshot1.png)
-![snapshot2](./snapshots/snapshot2.png)
-![snapshot3](./snapshots/snapshot3.png)
-![snapshot4](./snapshots/snapshot4.png)
-![snapshot5](./snapshots/snapshot5.png)
+<img src="./snapshots/snapshot1.png" width="200"/>
+<img src="./snapshots/snapshot2.png" width="200"/>
+<img src="./snapshots/snapshot3.png" width="200"/>
+<img src="./snapshots/snapshot4.png" width="200"/>
+<img src="./snapshots/snapshot5.png" width="200"/>
